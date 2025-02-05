@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@picocss/pico/scss" with (
+    $theme-color: "violet",
+);
+
+:root {
+    --pico-block-spacing-vertical: 0.5rem;
+    --pico-spacing: 0.5rem;
+    --pico-typography-spacing-vertical: 0.5rem;
+    --pico-form-element-spacing-vertical: 0.5rem;
+}
+
+canvas {
+    height: 100%;
+    width: 100%;
+}
