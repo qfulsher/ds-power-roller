@@ -4,7 +4,14 @@
     </ul>
     <ul>
         <li>
-            <a (click)="toggleTheme()" href="javascript:;">Toggle Theme</a>
+            <a (click)="toggleTheme()" href="javascript:;">
+                @if(theme() === 'dark') {
+                    <img class="theme-icon" style="filter: invert(1)" src="moon.svg" alt="dark theme">
+                }
+                @else {
+                    <img class="theme-icon" src="light.svg" alt="light theme">
+                }
+            </a>
         </li>
     </ul>
 </nav>
@@ -42,23 +49,35 @@
                     <option value="intuition">Intuition</option>
                     <option value="presence">Presence</option>
                 </select>
+                <!-- TODO: Make a component that pads these icons and gives more room for styling to show the selected / deselected state. Kinda hard to see if the edge is enabled or not. -->
+                <!-- or find a better edge icon -->
                 <div class="modifiers">
                     <label>Edges</label>
-                    <!-- TODO: Icon of a razor -->
-                    <div (click)="toggleEdge(1)" [ngClass]="{selected: rollOptionsForm.value.numEdges! >= 1}" class="edge">e</div>
-                    <div (click)="toggleEdge(2)" [ngClass]="{selected: rollOptionsForm.value.numEdges! === 2}"class="edge">e</div>
+                    <div (click)="toggleEdge(1)" [ngClass]="{selected: rollOptionsForm.value.numEdges! >= 1}" class="edge"><img src="edge.svg" alt="1 edge"/></div>
+                    <div (click)="toggleEdge(2)" [ngClass]="{selected: rollOptionsForm.value.numEdges! === 2}"class="edge"><img src="edge.svg" alt="2 edges"/></div>
                 </div>
                 <div class="modifiers">
                     <label>Banes</label>
-                    <!-- TODO: Icon of a drop of blood -->
-                    <div (click)="toggleBane(1)" [ngClass]="{selected: rollOptionsForm.value.numBanes! >= 1}"class="bane">b</div>
-                    <div (click)="toggleBane(2)" [ngClass]="{selected: rollOptionsForm.value.numBanes! === 2}"class="bane">b</div>
+                    <div (click)="toggleBane(1)" [ngClass]="{selected: rollOptionsForm.value.numBanes! >= 1}"class="bane"><img src="bane.svg" alt="1 bane"/></div>
+                    <div (click)="toggleBane(2)" [ngClass]="{selected: rollOptionsForm.value.numBanes! === 2}"class="bane"><img src="bane.svg" alt="2 banes"/></div>
                 </div>
             </fieldset>
             <button type="submit">Roll!</button>
         </form>    
     </div>
-    <div class="dice-box">
+    <div>
+        <div class="dice-box">
+        </div>
+        <div class="history">
+            @for (roll of rollHistory(); track roll) {
+                @if (roll.rollSum >= 19) {
+                    <article>Critical Roll {{roll.sum}}. Power Tier 3</article>
+                }
+                @else {
+                    <article>{{roll.sum}}. Power Tier {{roll.tier}}</article>
+                }
+            }
+        </div>
     </div>
 </div>
 <router-outlet />

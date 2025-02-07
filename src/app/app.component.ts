@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import DiceBox from '@3d-dice/dice-box';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -14,6 +14,8 @@ import { CommonModule } from '@angular/common';
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   diceBox: any;
   diceBoxInitPromise: Promise<void> | undefined;
+  rollHistory = signal([] as RollResult[]);
+  theme = signal('');
 
   characteristicsForm = new FormGroup({
     might: new FormControl<number>(0, { nonNullable: true }),
@@ -24,7 +26,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   });
 
   rollOptionsForm = new FormGroup({
-    characteristic: new FormControl<string | undefined>(undefined),
+    characteristic: new FormControl<string | null>(null),
     numEdges: new FormControl<number>(0, { nonNullable: true }),
     numBanes: new FormControl<number>(0, { nonNullable: true }),
   });
@@ -39,6 +41,20 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       })
     );
+
+    const html = document.querySelector('html')!;
+    this.theme.set(sessionStorage.getItem('theme') || html.dataset['theme'] || 'light');
+
+    effect(() => {
+      html.dataset['theme'] = this.theme();
+      sessionStorage.setItem('theme', this.theme());  
+    });
+
+    this.rollHistory.set(JSON.parse(sessionStorage.getItem('history') || '[]'));
+
+    effect(() => {
+      sessionStorage.setItem('history', JSON.stringify(this.rollHistory()));
+    });
   }
 
   ngOnDestroy(): void {
@@ -46,13 +62,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const html = document.querySelector('html')!;
-    let theme = sessionStorage.getItem('theme');
-    if (theme) {
-      html.dataset['theme'] = theme;
-    } else {
-      sessionStorage.setItem('theme', html.dataset['theme'] || 'light');
-    }
 
     let characteristics = sessionStorage.getItem('characteristics');
     if (characteristics) {
@@ -65,6 +74,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       assetPath: '/assets/', // include the trailing backslash
       container: '.dice-box',
       scale: 9,
+      gravity: 2,
+      friction: 1,  
     })
       .init()
       .then((diceBox: any) => (this.diceBox = diceBox));
@@ -73,8 +84,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   toggleTheme(): void {
     const html = document.querySelector('html')!;
 
-    html.dataset['theme'] = html.dataset['theme'] === 'dark' ? 'light' : 'dark';
-    sessionStorage.setItem('theme', html.dataset['theme']);
+    this.theme.update(t => t === 'dark' ? 'light' : 'dark');
+    html.dataset['theme'] = this.theme();
+    sessionStorage.setItem('theme', this.theme());
   }
 
   toggleEdge(count: number): void {
@@ -86,7 +98,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   toggleBane(count: number): void {
-    this.rollOptionsForm.patchValue({ numBanes: count });
+    if (this.rollOptionsForm.value.numBanes === count) {
+      this.rollOptionsForm.patchValue({ numBanes: 0 });
+    } else {
+      this.rollOptionsForm.patchValue({ numBanes: count });
+    }
   }
 
   async onSubmit(event: Event): Promise<void> {
@@ -94,13 +110,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.diceBox) {
       return;
     }
-
+    
     let modifier = 0;
     let tierModifier = 0;
-    let { characteristic, numEdges, numBanes } = this.rollOptionsForm.value;
+    let characteristicModifier = 0;
+    let { characteristic, numEdges, numBanes } = this.rollOptionsForm.getRawValue();
+
     if (characteristic) {
       let key = characteristic as keyof typeof this.characteristicsForm.value;
-      modifier += this.characteristicsForm.getRawValue()[key];
+      characteristicModifier = this.characteristicsForm.getRawValue()[key];
     }
 
     if (numEdges === 1) {
@@ -129,15 +147,40 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const result = (await this.diceBox.roll(`2d10`)) as any[];
     const naturalResult = result.reduce((s, r) => (s += r.value), 0);
-    const sum = naturalResult + modifier;
+    const sum = naturalResult + modifier + characteristicModifier;
 
     const naturalCrit = naturalResult >= 19;
-    if (naturalCrit) {
-      alert(`Critical Roll result: ${sum}. Power Tier 3`);
-    } else {
-      let tier = (sum <= 11 ? 1 : sum <= 16 ? 2 : 3) + tierModifier;
-      tier = tier < 1 ? 1 : tier > 3 ? 3 : tier; // make sure tier didn't get out of bounds
-      alert(`Roll result: ${sum}. Power Tier ${tier}`);
-    }
+    let tier = naturalCrit ? 3 : (sum <= 11 ? 1 : sum <= 16 ? 2 : 3) + tierModifier;
+    tier = tier < 1 ? 1 : tier > 3 ? 3 : tier; // make sure tier didn't get out of bounds
+
+    this.rollHistory.update(history => [{
+      characteristic: characteristic,
+      characteristicModifier,
+      numBanes,
+      numEdges,
+      roll1: result[0].value,
+      roll2: result[1].value,
+      rollSum: naturalResult,
+      sum,
+      tier
+    }, ...history]);
+
+    // reset form, leave characteristic set
+    this.rollOptionsForm.patchValue({
+      numBanes: 0,
+      numEdges: 0
+    });
   }
+}
+
+interface RollResult {
+  characteristic: string | null;
+  characteristicModifier: number;
+  numEdges: number;
+  numBanes: number;
+  roll1: number;
+  roll2: number;
+  rollSum: number;
+  sum: number;
+  tier: number;
 }
