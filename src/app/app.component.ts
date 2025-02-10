@@ -5,10 +5,11 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuraIconComponent } from "./components/aura-icon/aura-icon.component";
+import { RollCardComponent } from "./components/roll-card/roll-card.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ReactiveFormsModule, CommonModule, AuraIconComponent],
+  imports: [RouterOutlet, ReactiveFormsModule, CommonModule, AuraIconComponent, RollCardComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -118,32 +119,24 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     let { characteristic, numEdges, numBanes } = this.rollOptionsForm.getRawValue();
 
     if (characteristic) {
-      let key = characteristic as keyof typeof this.characteristicsForm.value;
+      let key = characteristic.toLowerCase() as keyof typeof this.characteristicsForm.value;
       characteristicModifier = this.characteristicsForm.getRawValue()[key];
     }
 
-    if (numEdges === 1) {
-      modifier += 2;
-    }
-
-    if (numEdges === 2) {
-      if (numBanes === 1) {
-        modifier += 4;
-      } else {
-        tierModifier += 1;
-      }
-    }
-
-    if (numBanes === 1) {
-      modifier -= 2;
-    }
-
-    if (numBanes === 2) {
-      if (numEdges === 1) {
-        modifier -= 4;
-      } else {
-        tierModifier -= 1;
-      }
+    let baneEdgeModifier = (-numBanes)+numEdges;
+    switch(baneEdgeModifier) {
+      case 1: 
+        modifier = 2;
+        break;
+      case 2:
+        tierModifier = 1;
+        break;
+      case -1:
+        modifier = -2;
+        break;
+      case -2:
+        tierModifier = -1;
+        break;
     }
 
     const result = (await this.diceBox.roll(`2d10`)) as any[];
@@ -151,7 +144,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const sum = naturalResult + modifier + characteristicModifier;
 
     const naturalCrit = naturalResult >= 19;
-    let tier = naturalCrit ? 3 : (sum <= 11 ? 1 : sum <= 16 ? 2 : 3) + tierModifier;
+    let naturalTier = naturalCrit ? 3 : (sum <= 11 ? 1 : sum <= 16 ? 2 : 3);
+    let tier = naturalTier + tierModifier;
     tier = tier < 1 ? 1 : tier > 3 ? 3 : tier; // make sure tier didn't get out of bounds
 
     this.rollHistory.update(history => [{
@@ -163,6 +157,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       roll2: result[1].value,
       rollSum: naturalResult,
       sum,
+      naturalTier,
       tier
     }, ...history]);
 
@@ -174,7 +169,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 }
 
-interface RollResult {
+export interface RollResult {
   characteristic: string | null;
   characteristicModifier: number;
   numEdges: number;
@@ -183,5 +178,6 @@ interface RollResult {
   roll2: number;
   rollSum: number;
   sum: number;
+  naturalTier: number;
   tier: number;
 }

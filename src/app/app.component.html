@@ -41,14 +41,12 @@
                 <label for="characteristic">Characteristic</label>
                 <select formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
                     <option value="null">None</option>
-                    <option value="might">Might</option>
-                    <option value="agility">Agility</option>
-                    <option value="reason">Reason</option>
-                    <option value="intuition">Intuition</option>
-                    <option value="presence">Presence</option>
+                    <option value="Might">Might</option>
+                    <option value="Agility">Agility</option>
+                    <option value="Reason">Reason</option>
+                    <option value="Intuition">Intuition</option>
+                    <option value="Presence">Presence</option>
                 </select>
-                <!-- TODO: Make a component that pads these icons and gives more room for styling to show the selected / deselected state. Kinda hard to see if the edge is enabled or not. -->
-                <!-- or find a better edge icon -->
                 <div class="modifiers">
                     <label>Edges</label>
                     <app-aura-icon (click)="toggleEdge(1)" [selected]="rollOptionsForm.value.numEdges! >= 1" iconSrc="edge.svg" iconAlt="1 edge"></app-aura-icon>
@@ -68,12 +66,7 @@
         </div>
         <div class="history">
             @for (roll of rollHistory(); track roll) {
-                @if (roll.rollSum >= 19) {
-                    <article>Critical Roll {{roll.sum}}. Power Tier 3</article>
-                }
-                @else {
-                    <article>{{roll.sum}}. Power Tier {{roll.tier}}</article>
-                }
+                <app-roll-card [roll]="roll"></app-roll-card>
             }
         </div>
     </div>

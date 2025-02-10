@@ -1,0 +1,15 @@
+@if(!roll()) {
+<article></article>
+}
+@else {
+<article>
+    <p>
+        @if(roll()!.rollSum >= 19) {<strong>Critical </strong>}
+        @if(roll()!.characteristic) {<span>{{roll()!.characteristic}} roll </span>}
+        <u>{{roll()!.sum}}</u> &nbsp; <mark>Power Tier {{roll()!.tier}}</mark>
+    </p>
+    <i>
+        {{rollSummary()}}
+    </i>
+</article>
+}
