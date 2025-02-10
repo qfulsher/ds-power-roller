@@ -4,10 +4,11 @@ import DiceBox from '@3d-dice/dice-box';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { AuraIconComponent } from "./components/aura-icon/aura-icon.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ReactiveFormsModule, CommonModule],
+  imports: [RouterOutlet, ReactiveFormsModule, CommonModule, AuraIconComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
