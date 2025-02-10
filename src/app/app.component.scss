@@ -29,4 +29,9 @@
         padding: var(--pico-block-spacing-horizontal) var(--pico-block-spacing-vertical);
         margin-bottom: var(--pico-spacing);
     }
+
+    .history {
+        height: 40vh;
+        overflow-y: scroll;
+    }
 }
