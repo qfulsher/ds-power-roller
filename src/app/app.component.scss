@@ -1,3 +1,5 @@
+@import '../styles.scss';
+
 .theme-icon {
     height: 20px;
     width: 20px;
@@ -10,15 +12,20 @@
 .content {
     display: flex;
     gap: 2rem;
+    @media screen and (max-width: $mobile-width) {
+        flex-flow: column;
+    }
 
     .dice-box {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 50vw;
         height: 50vh;
         margin-bottom: var(--pico-spacing);
         border: 1px solid var(--pico-contrast);
+        @media screen and (max-width: $mobile-width) {
+            width: auto;
+        }
     }    
 
     .modifiers {
