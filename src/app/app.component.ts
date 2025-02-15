@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, effect, OnDestroy, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import DiceBox from '@3d-dice/dice-box';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -18,6 +18,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   diceBoxInitPromise: Promise<void> | undefined;
   rollHistory = signal([] as RollResult[]);
   theme = signal('');
+
+  @ViewChild('history')
+  historyElement: ElementRef | undefined;
 
   characteristicsForm = new FormGroup({
     might: new FormControl<number>(0, { nonNullable: true }),
@@ -144,8 +147,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     const sum = naturalResult + modifier + characteristicModifier;
 
     const naturalCrit = naturalResult >= 19;
-    let naturalTier = naturalCrit ? 3 : (sum <= 11 ? 1 : sum <= 16 ? 2 : 3);
-    let tier = naturalTier + tierModifier;
+    let naturalTier = (sum <= 11 ? 1 : sum <= 16 ? 2 : 3);
+    let tier = naturalCrit ? 3 : naturalTier + tierModifier;
     tier = tier < 1 ? 1 : tier > 3 ? 3 : tier; // make sure tier didn't get out of bounds
 
     this.rollHistory.update(history => [{
@@ -166,6 +169,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       numBanes: 0,
       numEdges: 0
     });
+
+    // scroll history to top, so user can see the roll
+    this.historyElement?.nativeElement.scrollTo(0,0);
   }
 }
 

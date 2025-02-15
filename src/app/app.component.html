@@ -5,8 +5,7 @@
     <ul>
         <li>
             <a (click)="toggleTheme()" href="javascript:;">
-                <img class="theme-icon"
-                    [ngClass]="{'invert': theme() === 'dark'}"
+                <img class="theme-icon" [ngClass]="{'invert': theme() === 'dark'}"
                     src="{{theme() === 'dark' ? 'moon.svg' : 'light.svg'}}"
                     alt="{{theme() === 'dark' ? 'dark theme' : 'light theme'}}">
             </a>
@@ -33,40 +32,45 @@
                 </fieldset>
             </form>
         </details>
-    
+        <hr />
         <form (submit)="onSubmit($event)" [formGroup]="rollOptionsForm">
-            <hr />
-            <fieldset>
-                <legend>Power Roll Options</legend>
-                <label for="characteristic">Characteristic</label>
-                <select formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
-                    <option value="null">None</option>
-                    <option value="Might">Might</option>
-                    <option value="Agility">Agility</option>
-                    <option value="Reason">Reason</option>
-                    <option value="Intuition">Intuition</option>
-                    <option value="Presence">Presence</option>
-                </select>
-                <div class="modifiers">
-                    <label>Edges</label>
-                    <app-aura-icon (click)="toggleEdge(1)" [selected]="rollOptionsForm.value.numEdges! >= 1" iconSrc="edge.svg" iconAlt="1 edge"></app-aura-icon>
-                    <app-aura-icon (click)="toggleEdge(2)" [selected]="rollOptionsForm.value.numEdges! === 2" iconSrc="edge.svg" iconAlt="2 edges"></app-aura-icon>
-                </div>
-                <div class="modifiers">
-                    <label>Banes</label>
-                    <app-aura-icon (click)="toggleBane(1)" [selected]="rollOptionsForm.value.numBanes! >= 1" iconSrc="bane.svg" iconAlt="1 bane"></app-aura-icon>
-                    <app-aura-icon (click)="toggleBane(2)" [selected]="rollOptionsForm.value.numBanes! === 2" iconSrc="bane.svg" iconAlt="2 banes"></app-aura-icon>
-                </div>
-            </fieldset>
+            <details open>
+                <summary>Power Roll Options</summary>
+                <fieldset>
+                    <label for="characteristic">Characteristic</label>
+                    <select formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
+                        <option value="null">None</option>
+                        <option value="Might">Might</option>
+                        <option value="Agility">Agility</option>
+                        <option value="Reason">Reason</option>
+                        <option value="Intuition">Intuition</option>
+                        <option value="Presence">Presence</option>
+                    </select>
+                    <div class="modifiers">
+                        <label>Edges</label>
+                        <app-aura-icon (click)="toggleEdge(1)" [selected]="rollOptionsForm.value.numEdges! >= 1"
+                            iconSrc="edge.svg" iconAlt="1 edge"></app-aura-icon>
+                        <app-aura-icon (click)="toggleEdge(2)" [selected]="rollOptionsForm.value.numEdges! === 2"
+                            iconSrc="edge.svg" iconAlt="2 edges"></app-aura-icon>
+                    </div>
+                    <div class="modifiers">
+                        <label>Banes</label>
+                        <app-aura-icon (click)="toggleBane(1)" [selected]="rollOptionsForm.value.numBanes! >= 1"
+                            iconSrc="bane.svg" iconAlt="1 bane"></app-aura-icon>
+                        <app-aura-icon (click)="toggleBane(2)" [selected]="rollOptionsForm.value.numBanes! === 2"
+                            iconSrc="bane.svg" iconAlt="2 banes"></app-aura-icon>
+                    </div>
+                </fieldset>
+            </details>
             <button type="submit">Roll!</button>
-        </form>    
+        </form>
     </div>
-    <div>
+    <div style="width: 100%;">
         <div class="dice-box">
         </div>
-        <div class="history">
+        <div #history class="history">
             @for (roll of rollHistory(); track roll) {
-                <app-roll-card [roll]="roll"></app-roll-card>
+            <app-roll-card [roll]="roll"></app-roll-card>
             }
         </div>
     </div>

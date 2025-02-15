@@ -15,4 +15,9 @@ canvas {
     width: 100%;
 }
 
+footer {
+    margin: 0 var(--pico-spacing);
+    border-top: solid 1px var(--pico-muted-border-color);
+}
+
 $mobile-width: 765px
