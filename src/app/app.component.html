@@ -14,10 +14,10 @@
 </nav>
 
 <div class="content">
-    <div>
+    <div class="content__forms">
         <details>
             <summary>Characteristics</summary>
-            <form [formGroup]="characteristicsForm">
+            <form [formGroup]="characteristicsForm" class="content__forms__characteristics">
                 <fieldset>
                     <label for="might">Might</label>
                     <input formControlName="might" id="might" name="might" type="number" min="-5" max="5" />
@@ -33,7 +33,7 @@
             </form>
         </details>
         <hr />
-        <form (submit)="onSubmit($event)" [formGroup]="rollOptionsForm">
+        <form (submit)="onSubmit($event)" [formGroup]="rollOptionsForm" class="content__forms__roll">
             <details open>
                 <summary>Power Roll Options</summary>
                 <fieldset>
@@ -46,14 +46,14 @@
                         <option value="Intuition">Intuition</option>
                         <option value="Presence">Presence</option>
                     </select>
-                    <div class="modifiers">
+                    <div class="content__forms__roll__modifiers">
                         <label>Edges</label>
                         <app-aura-icon (click)="toggleEdge(1)" [selected]="rollOptionsForm.value.numEdges! >= 1"
                             iconSrc="edge.svg" iconAlt="1 edge"></app-aura-icon>
                         <app-aura-icon (click)="toggleEdge(2)" [selected]="rollOptionsForm.value.numEdges! === 2"
                             iconSrc="edge.svg" iconAlt="2 edges"></app-aura-icon>
                     </div>
-                    <div class="modifiers">
+                    <div class="content__forms__roll__modifiers">
                         <label>Banes</label>
                         <app-aura-icon (click)="toggleBane(1)" [selected]="rollOptionsForm.value.numBanes! >= 1"
                             iconSrc="bane.svg" iconAlt="1 bane"></app-aura-icon>
@@ -65,12 +65,12 @@
             <button type="submit">Roll!</button>
         </form>
     </div>
-    <div style="width: 100%;">
-        <div class="dice-box">
+    <div class="content__dice" style="width: 100%; height: 50vh">
+        <div class="content__dice__box">
         </div>
-        <div #history class="history">
+        <div #history class="content__dice__history">
             @for (roll of rollHistory(); track roll) {
-            <app-roll-card [roll]="roll"></app-roll-card>
+                <app-roll-card [roll]="roll"></app-roll-card>
             }
         </div>
     </div>

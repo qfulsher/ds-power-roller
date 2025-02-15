@@ -77,7 +77,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   ngAfterViewInit(): void {
     new DiceBox({
       assetPath: '/assets/', // include the trailing backslash
-      container: '.dice-box',
+      container: '.content__dice__box',
       scale: 9,
       gravity: 2,
       friction: 1,  

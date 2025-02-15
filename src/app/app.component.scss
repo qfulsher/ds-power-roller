@@ -12,34 +12,40 @@
 .content {
     display: flex;
     gap: 2rem;
-    height: 90vh;
+    height: 87vh;
     @media screen and (max-width: $mobile-width) {
         flex-flow: column;
-        height: 50vh;
+        gap: 1rem;
     }
 
-    .dice-box {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 50%;
-        width: 100%;
-        margin-bottom: var(--pico-spacing);
-        border: 1px solid var(--pico-contrast);
-    }    
-
-    .history {
-        height: 50%;
-        overflow-y: scroll;
-        padding: var(--pico-spacing)
+    &__forms {
+        &__roll {
+            &__modifiers {
+                display: flex;
+                gap: 2rem;
+                justify-content: space-evenly;
+                align-items: center;
+                padding: var(--pico-block-spacing-horizontal) var(--pico-block-spacing-vertical);
+                margin-bottom: var(--pico-spacing);
+            }
+        }
     }
 
-    .modifiers {
-        display: flex;
-        gap: 2rem;
-        justify-content: space-evenly;
-        align-items: center;
-        padding: var(--pico-block-spacing-horizontal) var(--pico-block-spacing-vertical);
-        margin-bottom: var(--pico-spacing);
+    &__dice {
+        &__box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 45%;
+            width: 100%;
+            margin-bottom: var(--pico-spacing);
+            border: 1px solid var(--pico-contrast);
+        }
+
+        &__history {
+            height: 45%;
+            overflow-y: scroll;
+            padding: var(--pico-spacing)
+        }
     }
 }
