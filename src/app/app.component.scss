@@ -19,6 +19,8 @@
     }
 
     &__forms {
+        min-width: 210px;
+
         &__roll {
             &__modifiers {
                 display: flex;
