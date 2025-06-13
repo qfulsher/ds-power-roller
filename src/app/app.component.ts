@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import DiceBox from '@3d-dice/dice-box';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuraIconComponent } from "./components/aura-icon/aura-icon.component";
 import { RollCardComponent } from "./components/roll-card/roll-card.component";
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +13,7 @@ import { RollCardComponent } from "./components/roll-card/roll-card.component";
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
+export class AppComponent implements AfterViewInit, OnInit {
   diceBox: any;
   diceBoxInitPromise: Promise<void> | undefined;
   rollHistory = signal([] as RollResult[]);
@@ -29,23 +29,27 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     intuition: new FormControl<number>(0, { nonNullable: true }),
     presence: new FormControl<number>(0, { nonNullable: true }),
   });
+  characteristicsFormValueChanges = toSignal(this.characteristicsForm.valueChanges);
 
   rollOptionsForm = new FormGroup({
-    characteristic: new FormControl<string | null>(null),
+    characteristic: new FormControl<string>('null', { nonNullable: true }),
     numEdges: new FormControl<number>(0, { nonNullable: true }),
     numBanes: new FormControl<number>(0, { nonNullable: true }),
   });
-
-  subscriptions: Subscription[] = [];
+  
+  rollOptionsFormValueChanges = toSignal(this.rollOptionsForm.valueChanges);
+  rollOptionsFormDisabled = computed(() => {
+    const characteristic = this.rollOptionsFormValueChanges()?.characteristic;
+    return !characteristic || characteristic === 'null';
+  });
 
   constructor() {
-    this.subscriptions.push(
-      this.characteristicsForm.valueChanges.subscribe((value) => {
-        if (this.characteristicsForm.valid) {
-          sessionStorage.setItem('characteristics', JSON.stringify(value));
-        }
-      })
-    );
+    effect(() => {
+      const value = this.characteristicsFormValueChanges();
+      if (this.characteristicsForm.valid) {
+        sessionStorage.setItem('characteristics', JSON.stringify(value));
+      }
+    });
 
     const html = document.querySelector('html')!;
     this.theme.set(sessionStorage.getItem('theme') || html.dataset['theme'] || 'light');
@@ -62,12 +66,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
-  }
-
   ngOnInit(): void {
-
     let characteristics = sessionStorage.getItem('characteristics');
     if (characteristics) {
       this.characteristicsForm.setValue(JSON.parse(characteristics));
@@ -87,11 +86,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   toggleTheme(): void {
-    const html = document.querySelector('html')!;
-
     this.theme.update(t => t === 'dark' ? 'light' : 'dark');
-    html.dataset['theme'] = this.theme();
-    sessionStorage.setItem('theme', this.theme());
   }
 
   toggleEdge(count: number): void {

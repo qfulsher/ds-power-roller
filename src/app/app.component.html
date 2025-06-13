@@ -38,7 +38,7 @@
                 <summary>Power Roll Options</summary>
                 <fieldset>
                     <label for="characteristic">Characteristic</label>
-                    <select formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
+                    <select required formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
                         <option value="null">None</option>
                         <option value="Might">Might</option>
                         <option value="Agility">Agility</option>
@@ -62,7 +62,7 @@
                     </div>
                 </fieldset>
             </details>
-            <button type="submit">Roll!</button>
+            <button [disabled]="rollOptionsFormDisabled()" type="submit">Roll!</button>
         </form>
     </div>
     <div class="content__dice">
