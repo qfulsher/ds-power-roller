@@ -10,8 +10,15 @@
     --pico-form-element-spacing-vertical: 0.5rem;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 main {
     height: auto;
+    flex-grow: 1;
 }
 
 canvas {

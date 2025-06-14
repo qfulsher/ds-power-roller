@@ -1,5 +1,14 @@
 @use '../styles.scss';
 
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: var(--pico-background);
+    color: var(--pico-foreground);
+}
+
 .theme-icon {
     height: 20px;
     width: 20px;
@@ -12,11 +21,11 @@
 .content {
     display: flex;
     gap: 2rem;
-    height: 85vh;
+    // height: 85vh;
     @media screen and (max-width: styles.$mobile-width) {
         flex-flow: column;
         gap: 1rem;
-        height: 87vh; 
+        // height: 87vh; 
     }
 
     &__forms {

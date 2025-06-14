@@ -46,7 +46,7 @@ export class AppComponent implements AfterViewInit, OnInit {
   constructor() {
     effect(() => {
       const value = this.characteristicsFormValueChanges();
-      if (this.characteristicsForm.valid) {
+      if (value && this.characteristicsForm.valid) {
         sessionStorage.setItem('characteristics', JSON.stringify(value));
       }
     });
