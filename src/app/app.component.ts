@@ -32,13 +32,21 @@ export class AppComponent implements AfterViewInit, OnInit {
   characteristicsFormValueChanges = toSignal(this.characteristicsForm.valueChanges);
 
   rollOptionsForm = new FormGroup({
-    characteristic: new FormControl<string>('null', { nonNullable: true }),
+    characteristic: new FormControl<string>(
+      'null',
+      {
+        nonNullable: true,
+        validators: [
+          control => control.value && control.value !== 'null' ? null : { required: true }
+        ]
+      }
+    ),
     numEdges: new FormControl<number>(0, { nonNullable: true }),
     numBanes: new FormControl<number>(0, { nonNullable: true }),
   });
   
   rollOptionsFormValueChanges = toSignal(this.rollOptionsForm.valueChanges);
-  rollOptionsFormDisabled = computed(() => {
+  characteristicsFieldEmpty = computed(() => {
     const characteristic = this.rollOptionsFormValueChanges()?.characteristic;
     return !characteristic || characteristic === 'null';
   });

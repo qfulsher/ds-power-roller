@@ -38,14 +38,16 @@
                 <summary>Power Roll Options</summary>
                 <fieldset>
                     <label for="characteristic">Characteristic</label>
-                    <select required formControlName="characteristic" id="characteristic" name="characteristic" [value]="">
-                        <option value="null">None</option>
+                    <select required formControlName="characteristic" id="characteristic" name="characteristic" value="null">
                         <option value="Might">Might</option>
                         <option value="Agility">Agility</option>
                         <option value="Reason">Reason</option>
                         <option value="Intuition">Intuition</option>
                         <option value="Presence">Presence</option>
                     </select>
+                    <small id="characteristic-help" [ngStyle]="characteristicsFieldEmpty() ? { visibility: 'visible' } : { visibility: 'hidden' }">
+                        Select a characteristic to roll.
+                    </small>
                     <div class="content__forms__roll__modifiers">
                         <label>Edges</label>
                         <app-aura-icon (click)="toggleEdge(1)" [selected]="rollOptionsForm.value.numEdges! >= 1"
@@ -62,7 +64,7 @@
                     </div>
                 </fieldset>
             </details>
-            <button [disabled]="rollOptionsFormDisabled()" type="submit">Roll!</button>
+            <button [disabled]="rollOptionsForm.invalid" type="submit">Roll!</button>
         </form>
     </div>
     <div class="content__dice">
