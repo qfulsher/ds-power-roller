@@ -1,59 +1,43 @@
-# PowerRolls
+# PowerRolls 
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.0.
+PowerRolls is an Angular application for simulating 3d dice rolls for the Draw Steel RPG.
 
-## Development server
+## Features
+- **3D Dice Simulation:** Realistic dice rolling using the `@3d-dice/dice-box` library.
+- **Mechanics:** Supports characteristic selection, roll modifiers, and roll history.
+- **Theming:** Light/dark mode toggle, with user preferences and roll history persisted in `sessionStorage`.
+- **No Backend:** All logic is client-side; no API or server required.
 
-To start a local development server, run:
+## Getting Started
+
+### Development Server
+Start the local dev server:
 
 ```bash
 ng serve
 ```
+Visit [http://localhost:4200/](http://localhost:4200/) in your browser. The app reloads automatically on code changes.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Building for Production
+To build the project:
 
 ```bash
-ng generate component component-name
+ng build -c production
 ```
+Build artifacts are output to the `dist/` directory.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Running Unit Tests
+To run unit tests with Karma:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Project Structure & Conventions
+- Main logic: `src/app/app.component.ts` (signals, forms, DiceBox integration)
+- Components: `src/app/components/`
+- 3D assets & themes: `public/assets/themes/`
+- State: Managed with Angular signals, persisted in `sessionStorage`
+- Theming: `<html data-theme>` and theme assets
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For more, see the [copilot-instructions.md](.github/copilot-instructions.md) and code comments in `app.component.ts`.
