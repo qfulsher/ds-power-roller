@@ -1,12 +1,12 @@
-import { NgClass, NgStyle } from '@angular/common';
-import { Component, input, model } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-aura-icon',
   imports: [NgClass],
   template: `
   <div class="icon-aura" [ngClass]="{selected: selected()}">
-    <img src="{{iconSrc()}}" alt="{{iconAlt()}}"/>
+    <img [src]="iconSrc()" [alt]="iconAlt()"/>
   </div>`,
   styles: `
     .icon-aura {
